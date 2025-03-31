@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaizen - AI Trading Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://unpkg.com/three@0.155.0/build/three.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0b0d;
+            color: #ffffff;
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #00ff88, #00a3ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="canvas-container"></div>
+
+    <nav class="fixed top-0 w-full bg-black/30 backdrop-blur-md z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold gradient-text">Kaizen</h1>
+            <div class="flex gap-6">
+                <a href="#markets" class="hover:text-green-400">Markets</a>
+                <a href="#strategies" class="hover:text-green-400">Strategies</a>
+                <a href="#education" class="hover:text-green-400">Education</a>
+                <a href="#insights" class="hover:text-green-400">AI Insights</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 pt-24">
+        <!-- Hero Section -->
+        <section class="py-20 text-center">
+            <h1 class="text-5xl font-bold mb-6">AI-Powered Trading Insights</h1>
+            <p class="text-xl text-gray-300 mb-8">Advanced analysis for Indian, US, and Crypto markets</p>
+            <div id="market-overview" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <!-- Market cards will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- Trading Strategies Section -->
+        <section id="strategies" class="py-12">
+            <h2 class="text-3xl font-bold mb-8 gradient-text">Trading Strategies</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-xl font-semibold mb-4">EMA Crossover Strategy</h3>
+                    <p class="text-gray-300">9 & 15 EMA crossover strategy for trend identification and trade execution</p>
+                </div>
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-xl font-semibold mb-4">Opening Range Breakout</h3>
+                    <p class="text-gray-300">Trading breakouts from the opening range for momentum plays</p>
+                </div>
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-xl font-semibold mb-4">Order Block Strategy</h3>
+                    <p class="text-gray-300">Identifying and trading institutional order blocks and liquidity zones</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Insights Section -->
+        <section id="insights" class="py-12">
+            <h2 class="text-3xl font-bold mb-8 gradient-text">AI Market Insights</h2>
+            <div id="insights-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Insights will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- Educational Content -->
+        <section id="education" class="py-12">
+            <h2 class="text-3xl font-bold mb-8 gradient-text">Trading Education</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Educational content will be populated by JS -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Three.js Background
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+        const material = new THREE.MeshBasicMaterial({ 
+            color: 0x00ff88,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.1
+        });
+        const torusKnot = new THREE.Mesh(geometry, material);
+        scene.add(torusKnot);
+        camera.position.z = 30;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            torusKnot.rotation.x += 0.01;
+            torusKnot.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Market Data
+        const markets = [
+            { name: "NIFTY 50", value: "18,563.40", change: "+1.2%" },
+            { name: "S&P 500", value: "4,783.20", change: "+0.8%" },
+            { name: "BTC/USD", value: "42,356.78", change: "+2.5%" }
+        ];
+
+        // Populate Market Overview
+        const marketOverview = document.getElementById('market-overview');
+        markets.forEach(market => {
+            const card = document.createElement('div');
+            card.className = 'card p-6 rounded-xl';
+            card.innerHTML = `
+                <h3 class="text-xl font-semibold">${market.name}</h3>
+                <p class="text-2xl font-bold my-2">${market.value}</p>
+                <p class="text-green-400">${market.change}</p>
+            `;
+            marketOverview.appendChild(card);
+        });
+
+        // Educational Content
+        const educationalContent = [
+            {
+                title: "Technical Analysis Basics",
+                content: "Learn fundamental concepts of technical analysis and chart patterns"
+            },
+            {
+                title: "Order Flow Trading",
+                content: "Understanding institutional order flow and market microstructure"
+            },
+            {
+                title: "Risk Management",
+                content: "Essential risk management strategies for consistent trading"
+            }
+        ];
+
+        // Populate Educational Content
+        const educationContainer = document.getElementById('education').querySelector('.grid');
+        educationalContent.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card p-6 rounded-xl';
+            card.innerHTML = `
+                <h3 class="text-xl font-semibold mb-4">${item.title}</h3>
+                <p class="text-gray-300">${item.content}</p>
+            `;
+            educationContainer.appendChild(card);
+        });
+
+        // AI Insights
+        const insights = [
+            {
+                market: "NIFTY 50",
+                insight: "Bullish momentum detected. Key support at 18,400. Watch for breakout above 18,600.",
+                confidence: "85%"
+            },
+            {
+                market: "BTC/USD",
+                insight: "Accumulation phase detected. Institution order blocks identified between 41K-42K.",
+                confidence: "78%"
+            }
+        ];
+
+        // Populate Insights
+        const insightsContainer = document.getElementById('insights-container');
+        insights.forEach(insight => {
+            const card = document.createElement('div');
+            card.className = 'card p-6 rounded-xl';
+            card.innerHTML = `
+                <h3 class="text-xl font-semibold mb-4">${insight.market}</h3>
+                <p class="text-gray-300 mb-4">${insight.insight}</p>
+                <p class="text-green-400">AI Confidence: ${insight.confidence}</p>
+            `;
+            insightsContainer.appendChild(card);
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
